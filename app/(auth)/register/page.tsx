@@ -272,6 +272,7 @@ export default function RegisterPage() {
               </div>
             )}
 
+
             {/* STEP 2: FORM */}
             {step === 2 && (
               <form
