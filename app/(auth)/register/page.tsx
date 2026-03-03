@@ -271,3 +271,236 @@ export default function RegisterPage() {
                 </div>
               </div>
             )}
+
+
+            {/* STEP 2: FORM */}
+            {step === 2 && (
+              <form
+                onSubmit={handleSubmit}
+                className="space-y-6 animate-in slide-in-from-right-4 duration-500"
+              >
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => setStep(1)}
+                  className="px-2 h-auto text-sm font-medium flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors hover:bg-transparent mb-2"
+                >
+                  <ArrowLeft className="h-4 w-4" /> Switch Role
+                </Button>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div className="space-y-2 col-span-2 md:col-span-1">
+                    <Label htmlFor="fullName">Full Name</Label>
+                    <Input
+                      id="fullName"
+                      placeholder=""
+                      value={formData.fullName}
+                      onChange={handleChange}
+                      required
+                      className="rounded-lg"
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2 md:col-span-1">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder=""
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                      className="rounded-lg"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone Number</Label>
+                    <Input
+                      id="phone"
+                      placeholder="+8801..."
+                      value={formData.phone}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Gender</Label>
+                    <Select
+                      onValueChange={(v) => handleSelectChange("gender", v)}
+                    >
+                      <SelectTrigger className="rounded-lg">
+                        <SelectValue placeholder="Select" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="male">Male</SelectItem>
+                        <SelectItem value="female">Female</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {role === "student" ? (
+                    <>
+                      <div className="space-y-2">
+                        <Label htmlFor="studentId">Student ID</Label>
+                        <Input
+                          id="studentId"
+                          placeholder=""
+                          value={formData.studentId}
+                          onChange={handleChange}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Current Semester</Label>
+                        <Select
+                          onValueChange={(v) =>
+                            handleSelectChange("semester", v)
+                          }
+                        >
+                          <SelectTrigger className="rounded-lg">
+                            <SelectValue placeholder="Select Semester" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="1">1st Semester</SelectItem>
+                            <SelectItem value="2">2nd Semester</SelectItem>
+                            <SelectItem value="3">3rd Semester</SelectItem>
+                            <SelectItem value="4">4th Semester</SelectItem>
+                            <SelectItem value="5">5th Semester</SelectItem>
+                            <SelectItem value="6">6th Semester</SelectItem>
+                            <SelectItem value="7">7th Semester</SelectItem>
+                            <SelectItem value="8">8th Semester</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="batch">Batch</Label>
+                        <Input
+                          id="batch"
+                          placeholder="21st"
+                          value={formData.batch}
+                          onChange={handleChange}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="cgpa">Current CGPA</Label>
+                        <Input
+                          id="cgpa"
+                          type="number"
+                          step="0.01"
+                          placeholder="3.85"
+                          value={formData.cgpa}
+                          onChange={handleChange}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="bloodGroup">Blood Group</Label>
+                        <Input
+                          id="bloodGroup"
+                          placeholder="O+"
+                          value={formData.bloodGroup}
+                          onChange={handleChange}
+                        />
+                      </div>
+                      <div className="space-y-2 col-span-2">
+                        <Label htmlFor="guardianPhone">
+                          Guardian's Contact
+                        </Label>
+                        <Input
+                          id="guardianPhone"
+                          placeholder="Emergency Phone"
+                          value={formData.guardianPhone}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="space-y-2">
+                        <Label htmlFor="teacherId">Teacher ID</Label>
+                        <Input
+                          id="teacherId"
+                          placeholder="T-101"
+                          value={formData.teacherId}
+                          onChange={handleChange}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="designation">Designation</Label>
+                        <Input
+                          id="designation"
+                          placeholder="Assistant Professor"
+                          value={formData.designation}
+                          onChange={handleChange}
+                        />
+                      </div>
+                      <div className="space-y-2 col-span-2 sm:col-span-1">
+                        <Label htmlFor="experience">Experience (Years)</Label>
+                        <div className="relative">
+                          <Clock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            id="experience"
+                            type="number"
+                            placeholder="5"
+                            className="pl-9"
+                            value={formData.experience}
+                            onChange={handleChange}
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-2 col-span-2">
+                        <Label htmlFor="specialization">
+                          Primary Specialization
+                        </Label>
+                        <Input
+                          id="specialization"
+                          placeholder="ML, IoT, Web"
+                          value={formData.specialization}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </>
+                  )}
+
+                  <div className="space-y-2 col-span-2">
+                    <Label htmlFor="password">Security Password</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      placeholder="••••••••"
+                      value={formData.password}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-4 space-y-4">
+                  <Button
+                    type="submit"
+                    className="w-full h-14 text-lg font-bold rounded-xl shadow-lg"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <Loader2 className="h-6 w-6 animate-spin" />
+                    ) : (
+                      "Complete Registration"
+                    )}
+                  </Button>
+                  <p className="text-center text-sm text-muted-foreground">
+                    Already registered?{" "}
+                    <Link
+                      href="/login"
+                      className="text-primary font-bold hover:underline underline-offset-4"
+                    >
+                      Sign In
+                    </Link>
+                  </p>
+                </div>
+              </form>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
