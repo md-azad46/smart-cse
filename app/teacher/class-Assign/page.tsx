@@ -207,3 +207,329 @@ export default function ClassAssign() {
       }
     }
   };
+
+   // ৬. সাবমিট হ্যান্ডলার (POST & PATCH)
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (
+      !formData.courseName ||
+      !formData.roomName ||
+      !formData.date ||
+      !formData.startTime ||
+      !formData.duration
+    ) {
+      toast.error("Please fill all fields!");
+      return;
+    }
+
+    const classData = {
+      courseName: formData.courseName,
+      courseCode: formData.courseCode,
+      roomNumber: formData.roomName,
+      day: formData.date,
+      startTime: formData.startTime,
+      duration: formData.duration,
+      teacherId: currentTeacherInfo?.teacherId,
+      teacherName: currentTeacherInfo?.name,
+    };
+
+    const method = editingId ? "PATCH" : "POST";
+    const url = editingId
+      ? `${API_URL}/class-assign/${editingId}`
+      : `${API_URL}/class-assign`;
+
+    try {
+      toast.loading(editingId ? "Updating..." : "Verifying & Saving...", {
+        id: "action",
+      });
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${(session?.user as any).accessToken}`,
+        },
+        body: JSON.stringify(classData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        toast.error(
+          result.message || "Conflict! The room is busy at this time.",
+          { id: "action" },
+        );
+        return;
+      }
+
+      toast.success(editingId ? "Schedule Updated!" : "Schedule Assigned!", {
+        id: "action",
+      });
+      setIsFormOpen(false);
+      setEditingId(null);
+      fetchSchedules(currentTeacherInfo.teacherId);
+      setFormData({
+        courseName: "",
+        courseCode: "",
+        roomName: "",
+        date: "",
+        startTime: "",
+        duration: "",
+      });
+    } catch (error) {
+      toast.error("Server Error! Try again.", { id: "action" });
+    }
+  };
+
+  return (
+    <div className="max-w-6xl mx-auto p-4 md:p-6 space-y-6 animate-in fade-in duration-500">
+      {/* HEADER */}
+      <div className="flex justify-between items-center bg-white p-6 rounded-[2rem] border shadow-sm">
+        <div>
+          <h1 className="text-2xl font-black italic tracking-tighter text-slate-900 uppercase underline decoration-primary decoration-2 underline-offset-4">
+            Class Management
+          </h1>
+          <p className="text-slate-500 font-bold text-[10px] italic mt-1 uppercase tracking-widest flex items-center gap-2">
+            <User size={12} className="text-primary" /> Instructor:{" "}
+            {currentTeacherInfo?.name || "Loading..."}
+          </p>
+        </div>
+        <Button
+          onClick={() => {
+            setEditingId(null);
+            setIsFormOpen(true);
+          }}
+          className="bg-primary h-11 px-6 rounded-xl font-black text-sm text-white shadow-lg shadow-primary/20 hover:scale-105 transition-transform"
+        >
+          <Plus className="mr-2 h-4 w-4 stroke-[3px]" /> ASSIGN CLASS
+        </Button>
+      </div>
+
+      {/* TABLE */}
+      <div className="bg-white rounded-[2rem] border overflow-hidden shadow-sm">
+        <Table>
+          <TableHeader className="bg-slate-900">
+            <TableRow className="hover:bg-transparent border-none">
+              <TableHead className="text-[10px] font-black uppercase text-slate-400 py-5 px-6">
+                Course
+              </TableHead>
+              <TableHead className="text-[10px] font-black uppercase text-slate-400">
+                Date & Time
+              </TableHead>
+              <TableHead className="text-[10px] font-black uppercase text-slate-400">
+                Room Info
+              </TableHead>
+              <TableHead className="text-[10px] font-black uppercase text-slate-400 text-right px-6">
+                Actions
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={4} className="text-center py-20">
+                  <Loader2 className="animate-spin mx-auto text-primary" />
+                </TableCell>
+              </TableRow>
+            ) : schedules.length > 0 ? (
+              schedules.map((item) => (
+                <TableRow
+                  key={item._id}
+                  className="group hover:bg-slate-50/80 border-b last:border-0 font-bold text-xs italic"
+                >
+                  <TableCell className="px-6 py-5">
+                    <p className="font-black text-slate-800 text-sm uppercase italic tracking-tighter">
+                      {item.courseName}
+                    </p>
+                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                      {item.courseCode}
+                    </p>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-1.5 text-slate-500">
+                        <Calendar size={12} className="text-primary" />{" "}
+                        {item.day}
+                      </div>
+                      <div className="flex items-center gap-1.5 text-slate-500">
+                        <Clock size={12} className="text-primary" />{" "}
+                        {formatTime12h(item.startTime)} ({item.duration}h)
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <span className="inline-flex items-center gap-1.5 bg-slate-100 text-slate-700 text-[10px] font-black px-3 py-1.5 rounded-lg uppercase">
+                      <MapPin size={10} className="text-primary" />{" "}
+                      {item.roomNumber}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-right px-6">
+                    <div className="flex justify-end gap-2">
+                      <button
+                        onClick={() => handleEditClick(item)}
+                        className="p-2 hover:bg-blue-50 text-blue-600 rounded-lg transition-colors"
+                      >
+                        <Edit size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(item._id)}
+                        className="p-2 hover:bg-red-50 text-red-500 rounded-lg transition-colors"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={4} className="text-center py-20 opacity-30">
+                  <Clock size={40} className="mx-auto mb-2 text-slate-400" />
+                  <p className="text-[10px] font-black uppercase italic tracking-widest text-slate-500">
+                    No upcoming schedules found
+                  </p>
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* MODAL FORM */}
+      <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+        <DialogContent className="max-w-2xl p-0 rounded-[2rem] border-none shadow-2xl bg-white overflow-hidden">
+          {/* Accessibility Fix for Dialog */}
+          <div className="sr-only">
+            <DialogTitle>
+              {editingId ? "Edit Schedule" : "Assign Classroom"}
+            </DialogTitle>
+            <DialogDescription>
+              Setup your class schedule without time conflicts.
+            </DialogDescription>
+          </div>
+
+          <div className="bg-slate-900 p-8 text-white">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 bg-primary/20 rounded-lg text-primary">
+                <Calendar size={20} />
+              </div>
+              <span className="text-[10px] font-black bg-white/10 px-3 py-1 rounded-full uppercase tracking-widest">
+                BU CSE Scheduler
+              </span>
+            </div>
+            <h2 className="text-2xl font-black italic uppercase tracking-tighter">
+              {editingId ? "Update Class Schedule" : "Create Class Schedule"}
+            </h2>
+          </div>
+
+          <form onSubmit={handleSubmit} className="p-8 space-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="space-y-1.5">
+                <Label className="text-[10px] font-black uppercase italic text-slate-400 ml-1">
+                  My Courses
+                </Label>
+                <select
+                  value={formData.courseName}
+                  onChange={(e) => {
+                    const selected = courses.find(
+                      (c) => c.name === e.target.value,
+                    );
+                    setFormData({
+                      ...formData,
+                      courseName: e.target.value,
+                      courseCode: selected?.code || "",
+                    });
+                  }}
+                  className="h-12 bg-slate-50 border-none rounded-xl font-bold w-full px-4 italic text-[12px] appearance-none outline-none focus:ring-2 ring-primary/20"
+                >
+                  <option value="">Select Course</option>
+                  {courses.map((course: any) => (
+                    <option key={course._id} value={course.name}>
+                      {course.name} ({course.code})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-[10px] font-black uppercase italic text-slate-400 ml-1">
+                  Room Allocation
+                </Label>
+                <select
+                  value={formData.roomName}
+                  onChange={(e) =>
+                    setFormData({ ...formData, roomName: e.target.value })
+                  }
+                  className="h-12 bg-slate-50 border-none rounded-xl font-bold w-full px-4 italic text-[12px] appearance-none outline-none focus:ring-2 ring-primary/20"
+                >
+                  <option value="">Choose Room</option>
+                  {classrooms.map((room: any) => (
+                    <option key={room._id} value={room.roomNo}>
+                      {room.roomNo} ({room.type})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-[10px] font-black uppercase italic text-slate-400 ml-1">
+                  Date
+                </Label>
+                <Input
+                  type="date"
+                  value={formData.date}
+                  onChange={(e) =>
+                    setFormData({ ...formData, date: e.target.value })
+                  }
+                  className="h-12 bg-slate-50 border-none rounded-xl font-bold italic"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-[10px] font-black uppercase italic text-slate-400 ml-1">
+                  Start Time
+                </Label>
+                <Input
+                  type="time"
+                  value={formData.startTime}
+                  onChange={(e) =>
+                    setFormData({ ...formData, startTime: e.target.value })
+                  }
+                  className="h-12 bg-slate-50 border-none rounded-xl font-bold italic"
+                />
+              </div>
+
+              <div className="space-y-1.5 md:col-span-2">
+                <Label className="text-[10px] font-black uppercase italic text-slate-400 ml-1">
+                  Duration (Hours)
+                </Label>
+                <Input
+                  type="number"
+                  step="0.5"
+                  min="0.5"
+                  value={formData.duration}
+                  onChange={(e) =>
+                    setFormData({ ...formData, duration: e.target.value })
+                  }
+                  className="h-12 bg-slate-50 border-none rounded-xl font-bold italic"
+                />
+              </div>
+            </div>
+
+            <Button
+              type="submit"
+              className="w-full h-14 rounded-2xl font-black text-sm uppercase tracking-tighter shadow-xl bg-primary text-white hover:scale-[1.01] transition-all"
+            >
+              {editingId
+                ? "SAVE CHANGES & VERIFY"
+                : "CONFIRM AND CHECK AVAILABILITY"}
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+
