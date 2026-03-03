@@ -1,6 +1,6 @@
 // components/teacher/sidebar.tsx
 "use client";
-import logo from "@/public/cse.avif";
+import logo from "@/public/cse.png";
 import Image from "next/image";
 import { useState } from "react";
 import Link from "next/link";
@@ -49,7 +49,6 @@ export function TeacherSidebar() {
     setIsLoggingOut(true);
     await signOut({ redirect: false });
     router.push("/login");
-    router.refresh();
   };
 
   return (

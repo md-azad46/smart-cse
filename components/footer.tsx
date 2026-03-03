@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { GraduationCap, Mail, Phone, MapPin } from "lucide-react"
-import logo from "@/public/cse.avif"
+import logo from "@/public/cse.png"
 import Image from "next/image"
 
 const footerLinks = {

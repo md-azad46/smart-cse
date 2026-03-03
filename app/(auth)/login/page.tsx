@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import logo from "@/public/cse.avif";
+import logo from "@/public/cse.png";
 import {
   Card,
   CardContent,
@@ -84,7 +84,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     }
 
     toast.success("✅ Login successful!");
-    router.refresh();
+  
 
     setTimeout(() => {
       if (role === "admin") {

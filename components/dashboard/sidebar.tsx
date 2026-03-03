@@ -25,7 +25,7 @@ import {
 } from "lucide-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useUser } from "@/context/UserContext"
-import logo from "@/public/cse.avif"
+import logo from "@/public/cse.png"
 import Image from "next/image"
 
 const mainNavItems = [

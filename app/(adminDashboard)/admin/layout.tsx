@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
-import logo from "@/public/cse.avif";
+import logo from "@/public/cse.png";
 import Image from "next/image";
 
 import {
@@ -148,7 +148,6 @@ function SidebarContent({
     if (closeDrawer) closeDrawer();
     await signOut({ redirect: false });
     router.push("/login");
-    router.refresh();
   };
 
   const getInitials = (name?: string | null) => {

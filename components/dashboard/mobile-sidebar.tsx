@@ -47,7 +47,6 @@ export function MobileSidebar() {
       callbackUrl: "/login"
     });
     router.push("/login");
-    router.refresh();
   };
 
   return (

@@ -16,7 +16,7 @@ import { useUser } from "@/context/UserContext"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { motion, AnimatePresence } from "framer-motion"
 import { useRouter } from "next/navigation"
-import logo from "@/public/cse.avif"
+import logo from "@/public/cse.png"
 import Image from "next/image"
 
 const navLinks = [
@@ -67,7 +67,6 @@ export function Navbar() {
       callbackUrl: "/login"
     });
     router.push("/login");
-    router.refresh();
   };
 
   const getInitials = (name: string | null | undefined) => {

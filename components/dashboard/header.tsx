@@ -31,7 +31,6 @@ export function DashboardHeader() {
       callbackUrl: "/login"
     });
     router.push("/login");
-    router.refresh();
   };
 
   const getInitials = (name: string | null | undefined) => {
